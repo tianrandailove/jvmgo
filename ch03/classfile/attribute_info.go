@@ -1,5 +1,12 @@
 package classfile
 
+/*
+attribute_info {
+    u2 attribute_name_index;
+    u4 attribute_length;
+    u1 info[attribute_length];
+}
+*/
 type AttributeInfo interface {
 	readInfo(reader *ClassReader)
 }
@@ -27,19 +34,19 @@ func newAttributeInfo(attrName string, attrLen uint32, cp ConstantPool) Attribut
 	case "Code":
 		return &CodeAttribute{cp: cp}
 	case "ConstantValue":
-		return &ConstantValueAttribute{cp: cp}
+		return &ConstantValueAttribute{}
 	case "Deprecated":
-		return &DeprecatedAttribute{cp: cp}
+		return &DeprecatedAttribute{}
 	case "Exceptions":
-		return &ExceptionsAttribute{cp: cp}
+		return &ExceptionsAttribute{}
 	case "LineNumberTable":
-		return &LineNumberTableAttribute{cp: cp}
+		return &LineNumberTableAttribute{}
 	case "LocalVariableTable":
-		return &LocalVariableTableAttribute{cp: cp}
+		return &LocalVariableTableAttribute{}
 	case "SourceFile":
 		return &SourceFileAttribute{cp: cp}
 	case "Synthetic":
-		return &SyntheticAttribute{cp: cp}
+		return &SyntheticAttribute{}
 	default:
 		return &UnparsedAttribute{attrName, attrLen, nil}
 	}

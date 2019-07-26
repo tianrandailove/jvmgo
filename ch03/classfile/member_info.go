@@ -1,5 +1,22 @@
 package classfile
 
+/*
+field_info {
+    u2             access_flags;
+    u2             name_index;
+    u2             descriptor_index;
+    u2             attributes_count;
+    attribute_info attributes[attributes_count];
+}
+method_info {
+    u2             access_flags;
+    u2             name_index;
+    u2             descriptor_index;
+    u2             attributes_count;
+    attribute_info attributes[attributes_count];
+}
+*/
+
 type MemberInfo struct {
 	cp              ConstantPool
 	accessFlags     uint16
@@ -8,6 +25,7 @@ type MemberInfo struct {
 	attributes      []AttributeInfo
 }
 
+// read field or method table
 func readMembers(reader *ClassReader, cp ConstantPool) []*MemberInfo {
 	memberCount := reader.readUint16()
 	members := make([]*MemberInfo, memberCount)
@@ -31,8 +49,8 @@ func (self *MemberInfo) AccessFlags() uint16 {
 	return self.accessFlags
 }
 func (self *MemberInfo) Name() string {
-	return self.cp.getUft8(self.nameIndex)
+	return self.cp.getUtf8(self.nameIndex)
 }
 func (self *MemberInfo) Descriptor() string {
-	return self.cp.getUft8(self.nameIndex)
+	return self.cp.getUtf8(self.descriptorIndex)
 }

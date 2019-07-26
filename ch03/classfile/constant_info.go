@@ -1,8 +1,9 @@
 package classfile
 
+// Constant pool tags
 const (
 	CONSTANT_Class              = 7
-	CONSTANT_Filedref           = 9
+	CONSTANT_Fieldref           = 9
 	CONSTANT_Methodref          = 10
 	CONSTANT_InterfaceMethodref = 11
 	CONSTANT_String             = 8
@@ -17,23 +18,30 @@ const (
 	CONSTANT_InvokeDynamic      = 18
 )
 
+/*
+cp_info {
+    u1 tag;
+    u1 info[];
+}
+*/
 type ConstantInfo interface {
 	readInfo(reader *ClassReader)
 }
 
 func readConstantInfo(reader *ClassReader, cp ConstantPool) ConstantInfo {
-	tag := reader.readUint64()
+	tag := reader.readUint8()
 	c := newConstantInfo(tag, cp)
 	c.readInfo(reader)
 	return c
 }
 
+// todo ugly code
 func newConstantInfo(tag uint8, cp ConstantPool) ConstantInfo {
 	switch tag {
 	case CONSTANT_Integer:
 		return &ConstantIntegerInfo{}
 	case CONSTANT_Float:
-		return &ConstantFloadInfo{}
+		return &ConstantFloatInfo{}
 	case CONSTANT_Long:
 		return &ConstantLongInfo{}
 	case CONSTANT_Double:
@@ -41,10 +49,10 @@ func newConstantInfo(tag uint8, cp ConstantPool) ConstantInfo {
 	case CONSTANT_Utf8:
 		return &ConstantUtf8Info{}
 	case CONSTANT_String:
-		return &ConstantStringInfo{}
+		return &ConstantStringInfo{cp: cp}
 	case CONSTANT_Class:
-		return &ConstantClassInfo{}
-	case CONSTANT_Filedref:
+		return &ConstantClassInfo{cp: cp}
+	case CONSTANT_Fieldref:
 		return &ConstantFieldrefInfo{ConstantMemberrefInfo{cp: cp}}
 	case CONSTANT_Methodref:
 		return &ConstantMethodrefInfo{ConstantMemberrefInfo{cp: cp}}
